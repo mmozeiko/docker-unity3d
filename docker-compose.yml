@@ -1,0 +1,58 @@
+version: "2.2"
+
+services:
+  unity3d-activate:
+    build: .
+    image: mmozeiko/unity3d
+    container_name: unity3d-activate
+    init: true
+    environment:
+      - DISPLAY
+    volumes:
+      - ${HOME}/.cache/docker-unity3d:/tmp/.local
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /var/run/dbus:/var/run/dbus
+    network_mode: "host"
+    privileged: true
+    entrypoint: [ "/unity_activate.sh" ]
+
+  unity3d-build:
+    image: mmozeiko/unity3d
+    container_name: unity3d-build
+    init: true
+    user: ${UID}
+    environment:
+      - DISPLAY
+      - BUILD_NAME
+    volumes:
+      - ${BUILD_PROJECT}:/mnt
+      - ${HOME}/.cache/docker-unity3d:/tmp/.local
+    network_mode: "host"
+
+  unity3d-build-windows64:
+    image: mmozeiko/unity3d
+    container_name: unity3d-build-windows64
+    init: true
+    user: ${UID}
+    environment:
+      - DISPLAY
+      - BUILD_NAME
+    volumes:
+      - ${BUILD_PROJECT}:/mnt
+      - ${HOME}/.cache/docker-unity3d:/tmp/.local
+    network_mode: "host"
+    command: [ "-buildWindows64Player", "/tmp/${BUILD_NAME}/${BUILD_NAME}.exe" ]
+
+  unity3d-build-linux64:
+    image: mmozeiko/unity3d
+    container_name: unity3d-build-linux64
+    init: true
+    user: ${UID}
+    environment:
+      - DISPLAY
+      - BUILD_NAME
+    volumes:
+      - ${BUILD_PROJECT}:/mnt
+      - ${HOME}/.cache/docker-unity3d:/tmp/.local
+    network_mode: "host"
+    command: [ "-buildLinux64Player", "/tmp/${BUILD_NAME}/${BUILD_NAME}" ]
